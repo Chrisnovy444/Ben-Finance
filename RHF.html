@@ -1,0 +1,2131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilan Financier - Bên-Finance - Mouvement Bên-Nâbîy'</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --border-radius: 10px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        body.dark-mode {
+            --primary: #1a1a2e;
+            --secondary: #0f4c75;
+            --light: #16213e;
+            --dark: #e6e6e6;
+            background-color: #121212;
+            color: #e6e6e6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            transition: var(--transition);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .quick-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .nav-btn {
+            padding: 10px 15px;
+            background-color: white;
+            color: var(--primary);
+            border: 2px solid var(--secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        body.dark-mode .nav-btn {
+            background-color: var(--light);
+            color: var(--dark);
+        }
+        
+        .nav-btn:hover {
+            background-color: var(--secondary);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .nav-btn.active {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        select, input {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background-color: white;
+            color: #333;
+            font-size: 1rem;
+            min-width: 150px;
+        }
+        
+        body.dark-mode select,
+        body.dark-mode input {
+            background-color: #2a2a2a;
+            color: #e6e6e6;
+            border-color: #444;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-export {
+            background-color: var(--success);
+        }
+        
+        .btn-export:hover {
+            background-color: #219653;
+        }
+        
+        .btn-dark {
+            background-color: var(--primary);
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            scroll-margin-top: 20px;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        body.dark-mode .section-title {
+            color: var(--dark);
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+        
+        body.dark-mode .card {
+            background-color: var(--light);
+            color: var(--dark);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        body.dark-mode .card-title {
+            color: var(--dark);
+        }
+        
+        .card-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .card-aumones .card-value {
+            color: var(--secondary);
+        }
+        
+        .card-batisseurs .card-value {
+            color: var(--success);
+        }
+        
+        .card-total .card-value {
+            color: var(--primary);
+        }
+        
+        .card-details {
+            font-size: 0.95rem;
+            color: #666;
+        }
+        
+        body.dark-mode .card-details {
+            color: #aaa;
+        }
+        
+        .bilan-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        
+        .bilan-table th {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .bilan-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        body.dark-mode .bilan-table td {
+            border-bottom: 1px solid #444;
+        }
+        
+        .bilan-table tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        body.dark-mode .bilan-table tr:hover {
+            background-color: #2a2a2a;
+        }
+        
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .chart-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+        }
+        
+        body.dark-mode .chart-card {
+            background-color: var(--light);
+        }
+        
+        .chart-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        body.dark-mode .chart-title {
+            color: var(--dark);
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+        
+        .tables-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .table-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+        }
+        
+        body.dark-mode .table-card {
+            background-color: var(--light);
+        }
+        
+        .table-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        body.dark-mode .table-title {
+            color: var(--dark);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background-color: #f1f5f9;
+            color: var(--primary);
+            font-weight: 600;
+            padding: 15px;
+            text-align: left;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        body.dark-mode th {
+            background-color: #2c3e50;
+            color: var(--dark);
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        body.dark-mode td {
+            border-bottom: 1px solid #444;
+        }
+        
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        body.dark-mode tr:hover {
+            background-color: #2a2a2a;
+        }
+        
+        .entree {
+            color: var(--success);
+            font-weight: 600;
+        }
+        
+        .sortie {
+            color: var(--danger);
+            font-weight: 600;
+        }
+        
+        .compte-aumones {
+            color: var(--secondary);
+        }
+        
+        .compte-batisseurs {
+            color: var(--success);
+        }
+        
+        .compte-rdgm {
+            color: var(--warning);
+        }
+        
+        .summary-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .summary-item {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+        }
+        
+        body.dark-mode .summary-item {
+            background-color: var(--light);
+        }
+        
+        .summary-item h3 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        body.dark-mode .summary-item h3 {
+            color: var(--dark);
+        }
+        
+        .summary-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        
+        body.dark-mode .stat-row {
+            border-bottom: 1px dashed #444;
+        }
+        
+        .stat-label {
+            font-weight: 500;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 25px;
+            margin-top: 40px;
+            color: #666;
+            border-top: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+        
+        body.dark-mode footer {
+            color: #aaa;
+            border-top: 1px solid #444;
+        }
+        
+        @media (max-width: 768px) {
+            .summary-cards, .charts-container, .tables-container, .summary-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .chart-card, .table-card {
+                padding: 15px;
+            }
+            
+            header {
+                padding: 20px 15px;
+            }
+            
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .quick-nav {
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+            
+            .nav-btn {
+                flex-shrink: 0;
+            }
+            
+            .card-value {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 20px 15px;
+            }
+            
+            .card-value {
+                font-size: 1.8rem;
+            }
+            
+            .section-title {
+                font-size: 1.3rem;
+            }
+            
+            .filters {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .filter-group {
+                width: 100%;
+            }
+            
+            select, input {
+                width: 100%;
+            }
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-entree {
+            background-color: rgba(39, 174, 96, 0.1);
+            color: var(--success);
+        }
+        
+        .badge-sortie {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger);
+        }
+        
+        .badge-orange {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--warning);
+        }
+        
+        .badge-momo {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--secondary);
+        }
+        
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+        }
+        
+        .percentage {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        body.dark-mode .percentage {
+            color: #aaa;
+        }
+        
+        .reset-btn {
+            background-color: var(--warning);
+            margin-left: 10px;
+        }
+        
+        .reset-btn:hover {
+            background-color: #e67e22;
+        }
+        
+        .contributor-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .contributor-stat {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        body.dark-mode .contributor-stat {
+            background-color: #2a2a2a;
+        }
+        
+        .contributor-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+        
+        body.dark-mode .contributor-name {
+            color: var(--dark);
+        }
+        
+        .contributor-amount {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--success);
+        }
+        
+        .contributor-count {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        body.dark-mode .contributor-count {
+            color: #aaa;
+        }
+        
+        .scroll-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--secondary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .scroll-top.show {
+            opacity: 1;
+        }
+        
+        .scroll-top:hover {
+            background-color: #2980b9;
+        }
+        
+        .period-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .period-card {
+            background-color: white;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+        }
+        
+        body.dark-mode .period-card {
+            background-color: var(--light);
+        }
+        
+        .period-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        body.dark-mode .period-title {
+            color: var(--dark);
+        }
+        
+        .period-amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--success);
+        }
+        
+        .period-amount.negative {
+            color: var(--danger);
+        }
+        
+        .week-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .week-btn {
+            padding: 8px 15px;
+            background-color: #f1f5f9;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        body.dark-mode .week-btn {
+            background-color: #2a2a2a;
+            color: var(--dark);
+        }
+        
+        .week-btn.active {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .week-btn:hover:not(.active) {
+            background-color: #e0e6ed;
+        }
+        
+        body.dark-mode .week-btn:hover:not(.active) {
+            background-color: #3a3a3a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-church"></i> Bilan Financier - Bên-Finance</h1>
+            <p>Mouvement Bên-Nâbîy' - Période du 01/01/2026 au 15/01/2026</p>
+        </header>
+        
+        <div class="quick-nav">
+            <a href="#resume" class="nav-btn active"><i class="fas fa-home"></i> Résumé</a>
+            <a href="#etats" class="nav-btn"><i class="fas fa-wallet"></i> États des Comptes</a>
+            <a href="#bilan" class="nav-btn"><i class="fas fa-chart-bar"></i> Bilan Entrées/Sorties</a>
+            <a href="#contributeurs" class="nav-btn"><i class="fas fa-users"></i> Contributeurs</a>
+            <a href="#transactions" class="nav-btn"><i class="fas fa-list"></i> Transactions</a>
+            <a href="#evolution" class="nav-btn"><i class="fas fa-chart-line"></i> Évolution</a>
+        </div>
+        
+        <div class="controls">
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="dateFilter"><i class="fas fa-calendar-alt"></i> Période :</label>
+                    <select id="dateFilter">
+                        <option value="all">Toute la période</option>
+                        <option value="week1">Semaine 1 (01-03/01)</option>
+                        <option value="week2">Semaine 2 (04-10/01)</option>
+                        <option value="week3">Semaine 3 (11-15/01)</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="typeFilter"><i class="fas fa-filter"></i> Type :</label>
+                    <select id="typeFilter">
+                        <option value="all">Tous les types</option>
+                        <option value="entree">Entrées seulement</option>
+                        <option value="sortie">Sorties seulement</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="accountFilter"><i class="fas fa-wallet"></i> Compte :</label>
+                    <select id="accountFilter">
+                        <option value="all">Tous les comptes</option>
+                        <option value="Aumônes">Aumônes</option>
+                        <option value="Bâtisseurs">Bâtisseurs</option>
+                        <option value="RDGM">Retraite DGM</option>
+                    </select>
+                </div>
+                
+                <button class="reset-btn" id="resetFilters">
+                    <i class="fas fa-redo"></i> Réinitialiser
+                </button>
+            </div>
+            
+            <div class="actions">
+                <button class="btn-dark" id="darkModeToggle">
+                    <i class="fas fa-moon"></i> Mode Sombre
+                </button>
+                <button class="btn-export" id="exportBtn">
+                    <i class="fas fa-file-export"></i> Exporter
+                </button>
+            </div>
+        </div>
+        
+        <!-- Section Résumé -->
+        <section id="resume" class="section">
+            <h2 class="section-title"><i class="fas fa-home"></i> RÉSUMÉ GÉNÉRAL</h2>
+            
+            <div class="summary-cards">
+                <div class="card card-aumones">
+                    <div class="card-title">
+                        <i class="fas fa-hand-holding-heart"></i> AUMÔNES/ASSISTANCE
+                    </div>
+                    <div class="card-value">9 832,5 FCFA</div>
+                    <div class="card-details">
+                        <p><strong>Entrées :</strong> 15 832,5 FCFA</p>
+                        <p><strong>Sorties :</strong> 7 000 FCFA</p>
+                        <p><strong>Contributeurs :</strong> 5 personnes</p>
+                        <p><strong>Dont 1 000 FCFA en espèces</strong></p>
+                    </div>
+                </div>
+                
+                <div class="card card-batisseurs">
+                    <div class="card-title">
+                        <i class="fas fa-hammer"></i> BÂTISSEURS
+                    </div>
+                    <div class="card-value">31 665 FCFA</div>
+                    <div class="card-details">
+                        <p><strong>Entrées :</strong> 31 665 FCFA</p>
+                        <p><strong>Sorties :</strong> 0 FCFA</p>
+                        <p><strong>Contributeurs :</strong> 5 personnes</p>
+                        <p><strong>Ratio 2:1 avec Aumônes ✓</strong></p>
+                    </div>
+                </div>
+                
+                <div class="card card-total">
+                    <div class="card-title">
+                        <i class="fas fa-chart-line"></i> TRÉSORERIE TOTALE
+                    </div>
+                    <div class="card-value">41 497,5 FCFA</div>
+                    <div class="card-details">
+                        <p><strong>Entrées totales :</strong> 60 497,5 FCFA</p>
+                        <p><strong>Sorties totales :</strong> 20 000 FCFA</p>
+                        <p><strong>Contributeurs :</strong> 6 personnes</p>
+                        <p><strong>Transactions :</strong> 19 opérations</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="period-summary">
+                <div class="period-card">
+                    <div class="period-title">Semaine 1</div>
+                    <div class="period-amount">+1 200 FCFA</div>
+                    <div class="period-details">01-03 Janvier</div>
+                </div>
+                <div class="period-card">
+                    <div class="period-title">Semaine 2</div>
+                    <div class="period-amount">+35 350 FCFA</div>
+                    <div class="period-details">04-10 Janvier</div>
+                </div>
+                <div class="period-card">
+                    <div class="period-title">Semaine 3</div>
+                    <div class="period-amount">+5 147,5 FCFA</div>
+                    <div class="period-details">11-15 Janvier</div>
+                </div>
+                <div class="period-card">
+                    <div class="period-title">Solde Net</div>
+                    <div class="period-amount">+40 497,5 FCFA</div>
+                    <div class="period-details">Bilan Final</div>
+                </div>
+            </div>
+            
+            <div class="contributor-stats">
+                <div class="contributor-stat">
+                    <div class="contributor-name">Daddy Galvani MVONDO</div>
+                    <div class="contributor-amount">38 422,5 FCFA</div>
+                    <div class="contributor-count">10 transactions (63,5%)</div>
+                </div>
+                <div class="contributor-stat">
+                    <div class="contributor-name">Tonton Christian NJABO</div>
+                    <div class="contributor-amount">11 000 FCFA</div>
+                    <div class="contributor-count">4 transactions (18,2%)</div>
+                </div>
+                <div class="contributor-stat">
+                    <div class="contributor-name">Laure SIMO</div>
+                    <div class="contributor-amount">5 000 FCFA</div>
+                    <div class="contributor-count">1 transaction (8,3%)</div>
+                </div>
+                <div class="contributor-stat">
+                    <div class="contributor-name">Couple NDEMANOU</div>
+                    <div class="contributor-amount">3 000 FCFA</div>
+                    <div class="contributor-count">1 transaction (5,0%)</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section États des Comptes -->
+        <section id="etats" class="section">
+            <h2 class="section-title"><i class="fas fa-wallet"></i> ÉTATS DÉTAILLÉS DES COMPTES</h2>
+            
+            <table class="bilan-table">
+                <thead>
+                    <tr>
+                        <th>Compte</th>
+                        <th>Solde Initial</th>
+                        <th>Entrées</th>
+                        <th>Sorties</th>
+                        <th>Solde Final</th>
+                        <th>% du Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Aumônes/Assistance</strong></td>
+                        <td>0 FCFA</td>
+                        <td class="entree">15 832,5 FCFA</td>
+                        <td class="sortie">7 000 FCFA</td>
+                        <td><strong>9 832,5 FCFA</strong></td>
+                        <td>23,7%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Bâtisseurs</strong></td>
+                        <td>0 FCFA</td>
+                        <td class="entree">31 665 FCFA</td>
+                        <td class="sortie">0 FCFA</td>
+                        <td><strong>31 665 FCFA</strong></td>
+                        <td>76,3%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Retraite DGM</strong></td>
+                        <td>0 FCFA</td>
+                        <td class="entree">13 000 FCFA</td>
+                        <td class="sortie">13 000 FCFA</td>
+                        <td><strong>0 FCFA</strong></td>
+                        <td>0%</td>
+                    </tr>
+                    <tr style="background-color: #f8f9fa; font-weight: bold;">
+                        <td><strong>TOTAL</strong></td>
+                        <td><strong>0 FCFA</strong></td>
+                        <td class="entree"><strong>60 497,5 FCFA</strong></td>
+                        <td class="sortie"><strong>20 000 FCFA</strong></td>
+                        <td><strong>41 497,5 FCFA</strong></td>
+                        <td><strong>100%</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h2 class="chart-title"><i class="fas fa-chart-pie"></i> RÉPARTITION DES FONDS</h2>
+                    <div class="chart-wrapper">
+                        <canvas id="fundsChart"></canvas>
+                    </div>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #3498db;"></div>
+                            <span>Aumônes (9 832,5 FCFA - 23,7%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #27ae60;"></div>
+                            <span>Bâtisseurs (31 665 FCFA - 76,3%)</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <h2 class="chart-title"><i class="fas fa-money-bill-wave"></i> RÉPARTITION PAR SUPPORT</h2>
+                    <div class="chart-wrapper">
+                        <canvas id="supportChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section Bilan Entrées/Sorties -->
+        <section id="bilan" class="section">
+            <h2 class="section-title"><i class="fas fa-chart-bar"></i> BILAN DES ENTRÉES ET SORTIES</h2>
+            
+            <div class="week-selector" id="weekSelector">
+                <button class="week-btn active" data-week="all">Toutes périodes</button>
+                <button class="week-btn" data-week="1">Semaine 1</button>
+                <button class="week-btn" data-week="2">Semaine 2</button>
+                <button class="week-btn" data-week="3">Semaine 3</button>
+            </div>
+            
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h2 class="chart-title"><i class="fas fa-exchange-alt"></i> ENTRÉES VS SORTIES PAR SEMAINE</h2>
+                    <div class="chart-wrapper">
+                        <canvas id="weeklyChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <h2 class="chart-title"><i class="fas fa-chart-bar"></i> RÉPARTITION DES SORTIES</h2>
+                    <div class="chart-wrapper">
+                        <canvas id="expensesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="summary-section">
+                <div class="summary-item">
+                    <h3><i class="fas fa-sign-in-alt"></i> SYNTHÈSE DES ENTRÉES</h3>
+                    <div class="summary-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">Total des entrées</span>
+                            <span class="stat-value entree">60 497,5 FCFA</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Moyenne par transaction</span>
+                            <span class="stat-value">3 184 FCFA</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Nombre de transactions</span>
+                            <span class="stat-value">16 entrées</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Jour avec plus d'entrées</span>
+                            <span class="stat-value">08/01 (11 100 FCFA)</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="summary-item">
+                    <h3><i class="fas fa-sign-out-alt"></i> SYNTHÈSE DES SORTIES</h3>
+                    <div class="summary-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">Total des sorties</span>
+                            <span class="stat-value sortie">20 000 FCFA</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Moyenne par transaction</span>
+                            <span class="stat-value">6 667 FCFA</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Nombre de transactions</span>
+                            <span class="stat-value">3 sorties</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Taux de dépense</span>
+                            <span class="stat-value">33,1%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="summary-item">
+                    <h3><i class="fas fa-percentage"></i> RÉPARTITION PAR CATÉGORIE</h3>
+                    <div class="summary-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">Contributions obligatoires</span>
+                            <span class="stat-value">78,5%</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Contributions volontaires</span>
+                            <span class="stat-value">21,5%</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Ratio Bâtisseurs/Aumônes</span>
+                            <span class="stat-value">2:1 ✓</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Frais de transaction</span>
+                            <span class="stat-value">619,5 FCFA</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section Contributeurs -->
+        <section id="contributeurs" class="section">
+            <h2 class="section-title"><i class="fas fa-users"></i> CONTRIBUTIONS PAR PERSONNE</h2>
+            
+            <div class="table-card">
+                <div class="table-title">
+                    <span><i class="fas fa-user-friends"></i> DÉTAIL DES CONTRIBUTIONS</span>
+                    <span id="contributorCount">6 contributeurs</span>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table id="contributorsTable">
+                        <thead>
+                            <tr>
+                                <th>Contributeur</th>
+                                <th>Total</th>
+                                <th>% Total</th>
+                                <th>Transactions</th>
+                                <th>Aumônes</th>
+                                <th>Bâtisseurs</th>
+                                <th>R.DGM</th>
+                                <th>Moyenne/Trx</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contributorsBody">
+                            <!-- Les contributeurs seront ajoutés ici par JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h2 class="chart-title"><i class="fas fa-chart-pie"></i> RÉPARTITION PAR CONTRIBUTEUR</h2>
+                    <div class="chart-wrapper">
+                        <canvas id="contributorsPieChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <h2 class="chart-title"><i class="fas fa-chart-bar"></i> TOP DES CONTRIBUTEURS</h2>
+                    <div class="chart-wrapper">
+                        <canvas id="topContributorsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section Transactions -->
+        <section id="transactions" class="section">
+            <h2 class="section-title"><i class="fas fa-list"></i> JOURNAL DES TRANSACTIONS</h2>
+            
+            <div class="table-card">
+                <div class="table-title">
+                    <span><i class="fas fa-history"></i> HISTORIQUE COMPLET</span>
+                    <span id="transactionCount">19 transactions</span>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table id="transactionsTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Compte</th>
+                                <th>Montant (FCFA)</th>
+                                <th>Description</th>
+                                <th>Moyen</th>
+                                <th>Contributeur</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsBody">
+                            <!-- Les transactions seront ajoutées ici par JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section Évolution -->
+        <section id="evolution" class="section">
+            <h2 class="section-title"><i class="fas fa-chart-line"></i> ÉVOLUTION DES FLUX FINANCIERS</h2>
+            
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h2 class="chart-title"><i class="fas fa-chart-line"></i> ÉVOLUTION QUOTIDIENNE</h2>
+                    <div class="chart-wrapper">
+                        <canvas id="dailyEvolutionChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <h2 class="chart-title"><i class="fas fa-chart-area"></i> SOLDE CUMULÉ</h2>
+                    <div class="chart-wrapper">
+                        <canvas id="cumulativeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="summary-section">
+                <div class="summary-item">
+                    <h3><i class="fas fa-trend-up"></i> TENDANCES</h3>
+                    <div class="summary-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">Meilleur jour</span>
+                            <span class="stat-value entree">08/01 (+11 100 FCFA)</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Plus forte sortie</span>
+                            <span class="stat-value sortie">01/01 (-5 800 FCFA)</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Croissance moyenne</span>
+                            <span class="stat-value entree">+2 700 FCFA/jour</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Taux d'épargne</span>
+                            <span class="stat-value">67,0%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="summary-item">
+                    <h3><i class="fas fa-calendar-week"></i> PERFORMANCE HEBDOMADAIRE</h3>
+                    <div class="summary-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">Semaine 1</span>
+                            <span class="stat-value">+1 200 FCFA</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Semaine 2</span>
+                            <span class="stat-value entree">+35 350 FCFA</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Semaine 3</span>
+                            <span class="stat-value entree">+5 147,5 FCFA</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Taux croissance</span>
+                            <span class="stat-value">+3 277%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="summary-item">
+                    <h3><i class="fas fa-project-diagram"></i> PROJET RETRAITE DGM</h3>
+                    <div class="summary-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">Total collecté</span>
+                            <span class="stat-value">13 000 FCFA</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Total dépensé</span>
+                            <span class="stat-value">13 000 FCFA</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Équilibre</span>
+                            <span class="stat-value">0 FCFA</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Contributeurs</span>
+                            <span class="stat-value">3 personnes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <footer>
+            <p>Bên-Finance - Département des Finances du Mouvement Bên-Nâbîy'</p>
+            <p>© 2026 - Dernière mise à jour : 15 janvier 2026</p>
+            <p style="margin-top: 10px; font-size: 0.8rem; opacity: 0.8;">
+                <i class="fas fa-info-circle"></i> Ce bilan respecte la répartition obligatoire : 10% Bâtisseurs, 5% Aumônes. Toutes les sommes sont en FCFA.
+            </p>
+        </footer>
+    </div>
+    
+    <div class="scroll-top" id="scrollTop">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+    
+    <script>
+        // Données complètes du bilan financier
+        const transactions = [
+            { date: "01/01/2026", type: "Entrée", compte: "Aumônes", montant: 150, description: "Dépôt Daddy Galvani MVONDO", moyen: "Mobile Money", contributeur: "Daddy Galvani MVONDO", semaine: 1 },
+            { date: "01/01/2026", type: "Entrée", compte: "Bâtisseurs", montant: 300, description: "Dépôt Daddy Galvani MVONDO", moyen: "Mobile Money", contributeur: "Daddy Galvani MVONDO", semaine: 1 },
+            { date: "01/01/2026", type: "Sortie", compte: "Aumônes/Bâtisseurs", montant: 5800, description: "Paiement abonnement outils online", moyen: "Orange Money", contributeur: "Système", semaine: 1 },
+            { date: "02/01/2026", type: "Entrée", compte: "Aumônes", montant: 250, description: "Dépôt Tonton Christian NJABO", moyen: "Orange Money", contributeur: "Tonton Christian NJABO", semaine: 1 },
+            { date: "02/01/2026", type: "Entrée", compte: "Bâtisseurs", montant: 500, description: "Dépôt Tonton Christian NJABO", moyen: "Orange Money", contributeur: "Tonton Christian NJABO", semaine: 1 },
+            { date: "04/01/2026", type: "Entrée", compte: "Retraite DGM", montant: 5000, description: "Dépôt Laure SIMO", moyen: "Orange Money", contributeur: "Laure SIMO", semaine: 2 },
+            { date: "05/01/2026", type: "Entrée", compte: "Aumônes", montant: 4000, description: "Dépôt Daddy Galvani MVONDO", moyen: "Orange Money", contributeur: "Daddy Galvani MVONDO", semaine: 2 },
+            { date: "05/01/2026", type: "Entrée", compte: "Bâtisseurs", montant: 8000, description: "Dépôt Daddy Galvani MVONDO", moyen: "Orange Money", contributeur: "Daddy Galvani MVONDO", semaine: 2 },
+            { date: "06/01/2026", type: "Sortie", compte: "Retraite DGM", montant: 5000, description: "Cuisine pour retraite", moyen: "Orange Money", contributeur: "Système", semaine: 2 },
+            { date: "07/01/2026", type: "Entrée", compte: "Aumônes", montant: 1000, description: "Dépôt Tonton Christian NJABO", moyen: "Orange Money", contributeur: "Tonton Christian NJABO", semaine: 2 },
+            { date: "07/01/2026", type: "Entrée", compte: "Bâtisseurs", montant: 2000, description: "Dépôt Tonton Christian NJABO", moyen: "Orange Money", contributeur: "Tonton Christian NJABO", semaine: 2 },
+            { date: "07/01/2026", type: "Entrée", compte: "Retraite DGM", montant: 5000, description: "Dépôt Tonton Christian NJABO", moyen: "Orange Money", contributeur: "Tonton Christian NJABO", semaine: 2 },
+            { date: "07/01/2026", type: "Entrée", compte: "Retraite DGM", montant: 3000, description: "Dépôt Couple NDEMANOU", moyen: "Mobile Money", contributeur: "Couple NDEMANOU", semaine: 2 },
+            { date: "08/01/2026", type: "Entrée", compte: "Aumônes", montant: 900, description: "Dépôt Daddy Galvani MVONDO", moyen: "Orange Money", contributeur: "Daddy Galvani MVONDO", semaine: 2 },
+            { date: "08/01/2026", type: "Entrée", compte: "Bâtisseurs", montant: 1800, description: "Dépôt Daddy Galvani MVONDO", moyen: "Orange Money", contributeur: "Daddy Galvani MVONDO", semaine: 2 },
+            { date: "08/01/2026", type: "Entrée", compte: "Aumônes", montant: 2800, description: "Dépôt Daddy Galvani MVONDO", moyen: "Orange Money", contributeur: "Daddy Galvani MVONDO", semaine: 2 },
+            { date: "08/01/2026", type: "Entrée", compte: "Bâtisseurs", montant: 5600, description: "Dépôt Daddy Galvani MVONDO", moyen: "Orange Money", contributeur: "Daddy Galvani MVONDO", semaine: 2 },
+            { date: "10/01/2026", type: "Sortie", compte: "Retraite DGM", montant: 3000, description: "Cuisine Retraite", moyen: "Orange Money", contributeur: "Système", semaine: 2 },
+            { date: "10/01/2026", type: "Entrée", compte: "Aumônes", montant: 350, description: "Dépôt Tonton Christian NJABO", moyen: "Orange Money", contributeur: "Tonton Christian NJABO", semaine: 2 },
+            { date: "10/01/2026", type: "Entrée", compte: "Bâtisseurs", montant: 700, description: "Dépôt Tonton Christian NJABO", moyen: "Orange Money", contributeur: "Tonton Christian NJABO", semaine: 2 },
+            { date: "11/01/2026", type: "Entrée", compte: "Aumônes", montant: 25, description: "Dépôt Ministre Chrisnovy", moyen: "Orange Money", contributeur: "Ministre Chrisnovy", semaine: 3 },
+            { date: "11/01/2026", type: "Entrée", compte: "Bâtisseurs", montant: 50, description: "Dépôt Ministre Chrisnovy", moyen: "Orange Money", contributeur: "Ministre Chrisnovy", semaine: 3 },
+            { date: "13/01/2026", type: "Sortie", compte: "Aumônes", montant: 7000, description: "Facture électricité", moyen: "Orange Money", contributeur: "Système", semaine: 3 },
+            { date: "13/01/2026", type: "Entrée", compte: "Aumônes", montant: 2407.5, description: "Dépôt Daddy Galvani MVONDO", moyen: "Orange Money", contributeur: "Daddy Galvani MVONDO", semaine: 3 },
+            { date: "13/01/2026", type: "Entrée", compte: "Bâtisseurs", montant: 4815, description: "Dépôt Daddy Galvani MVONDO", moyen: "Orange Money", contributeur: "Daddy Galvani MVONDO", semaine: 3 },
+            { date: "15/01/2026", type: "Sortie", compte: "Retraite DGM", montant: 5000, description: "Cuisine Retraite", moyen: "Orange Money", contributeur: "Système", semaine: 3 },
+            { date: "15/01/2026", type: "Entrée", compte: "Aumônes", montant: 400, description: "Dépôt Tonton Christian NJABO", moyen: "Orange Money", contributeur: "Tonton Christian NJABO", semaine: 3 },
+            { date: "15/01/2026", type: "Entrée", compte: "Bâtisseurs", montant: 800, description: "Dépôt Tonton Christian NJABO", moyen: "Orange Money", contributeur: "Tonton Christian NJABO", semaine: 3 },
+            { date: "15/01/2026", type: "Entrée", compte: "Aumônes", montant: 2550, description: "Dépôt Daddy Galvani MVONDO", moyen: "Orange Money", contributeur: "Daddy Galvani MVONDO", semaine: 3 },
+            { date: "15/01/2026", type: "Entrée", compte: "Bâtisseurs", montant: 5100, description: "Dépôt Daddy Galvani MVONDO", moyen: "Orange Money", contributeur: "Daddy Galvani MVONDO", semaine: 3 },
+            { date: "15/01/2026", type: "Entrée", compte: "Aumônes", montant: 1000, description: "Dépôt Ministre Majolie NGAÏMA", moyen: "Orange Money", contributeur: "Ministre Majolie NGAÏMA", semaine: 3 },
+            { date: "15/01/2026", type: "Entrée", compte: "Bâtisseurs", montant: 2000, description: "Dépôt Ministre Majolie NGAÏMA", moyen: "Orange Money", contributeur: "Ministre Majolie NGAÏMA", semaine: 3 }
+        ];
+
+        // Données des contributeurs avec statistiques
+        const contributors = [
+            { 
+                name: "Daddy Galvani MVONDO", 
+                total: 38422.5, 
+                aumones: 10157.5, 
+                batisseurs: 20265, 
+                rdgm: 0, 
+                percentage: 63.5,
+                transactions: 10,
+                moyenne: 3842.25
+            },
+            { 
+                name: "Tonton Christian NJABO", 
+                total: 11000, 
+                aumones: 2000, 
+                batisseurs: 3000, 
+                rdgm: 5000, 
+                percentage: 18.2,
+                transactions: 4,
+                moyenne: 2750
+            },
+            { 
+                name: "Laure SIMO", 
+                total: 5000, 
+                aumones: 0, 
+                batisseurs: 0, 
+                rdgm: 5000, 
+                percentage: 8.3,
+                transactions: 1,
+                moyenne: 5000
+            },
+            { 
+                name: "Couple NDEMANOU", 
+                total: 3000, 
+                aumones: 0, 
+                batisseurs: 0, 
+                rdgm: 3000, 
+                percentage: 5.0,
+                transactions: 1,
+                moyenne: 3000
+            },
+            { 
+                name: "Ministre Majolie NGAÏMA", 
+                total: 3000, 
+                aumones: 1000, 
+                batisseurs: 2000, 
+                rdgm: 0, 
+                percentage: 5.0,
+                transactions: 1,
+                moyenne: 3000
+            },
+            { 
+                name: "Ministre Chrisnovy", 
+                total: 75, 
+                aumones: 25, 
+                batisseurs: 50, 
+                rdgm: 0, 
+                percentage: 0.1,
+                transactions: 1,
+                moyenne: 75
+            }
+        ];
+
+        // Fonction pour formater les nombres avec séparateurs de milliers
+        function formatNumber(num) {
+            return new Intl.NumberFormat('fr-FR').format(num);
+        }
+
+        // Fonction pour déterminer la classe CSS en fonction du type de transaction
+        function getTransactionClass(type, compte) {
+            let className = type === "Entrée" ? "entree" : "sortie";
+            
+            if (compte.includes("Aumônes")) {
+                className += " compte-aumones";
+            } else if (compte.includes("Bâtisseurs")) {
+                className += " compte-batisseurs";
+            } else if (compte.includes("Retraite") || compte.includes("RDGM")) {
+                className += " compte-rdgm";
+            }
+            
+            return className;
+        }
+
+        // Fonction pour déterminer la classe du badge en fonction du moyen de paiement
+        function getBadgeClass(moyen) {
+            if (moyen.includes("Orange")) {
+                return "badge badge-orange";
+            } else if (moyen.includes("Mobile")) {
+                return "badge badge-momo";
+            }
+            return "badge";
+        }
+
+        // Fonction pour afficher les transactions dans le tableau
+        function displayTransactions(filteredTransactions) {
+            const tbody = document.getElementById('transactionsBody');
+            tbody.innerHTML = '';
+            
+            let totalEntrees = 0;
+            let totalSorties = 0;
+            
+            filteredTransactions.forEach(transaction => {
+                const row = document.createElement('tr');
+                const typeClass = transaction.type === "Entrée" ? "badge-entree" : "badge-sortie";
+                const transactionClass = getTransactionClass(transaction.type, transaction.compte);
+                
+                row.innerHTML = `
+                    <td>${transaction.date}</td>
+                    <td><span class="badge ${typeClass}">${transaction.type}</span></td>
+                    <td>${transaction.compte}</td>
+                    <td class="${transactionClass}">${formatNumber(transaction.montant)} FCFA</td>
+                    <td>${transaction.description}</td>
+                    <td><span class="${getBadgeClass(transaction.moyen)}">${transaction.moyen}</span></td>
+                    <td>${transaction.contributeur}</td>
+                `;
+                
+                tbody.appendChild(row);
+                
+                if (transaction.type === "Entrée") {
+                    totalEntrees += transaction.montant;
+                } else {
+                    totalSorties += transaction.montant;
+                }
+            });
+            
+            document.getElementById('transactionCount').textContent = `${filteredTransactions.length} transactions (${formatNumber(totalEntrees)} FCFA entrées - ${formatNumber(totalSorties)} FCFA sorties)`;
+        }
+
+        // Fonction pour afficher les contributeurs dans le tableau
+        function displayContributors() {
+            const tbody = document.getElementById('contributorsBody');
+            tbody.innerHTML = '';
+            
+            contributors.forEach(contributor => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${contributor.name}</strong></td>
+                    <td><strong>${formatNumber(contributor.total)} FCFA</strong></td>
+                    <td>${contributor.percentage}%</td>
+                    <td>${contributor.transactions}</td>
+                    <td>${contributor.aumones ? formatNumber(contributor.aumones) : "0"} FCFA</td>
+                    <td>${contributor.batisseurs ? formatNumber(contributor.batisseurs) : "0"} FCFA</td>
+                    <td>${contributor.rdgm ? formatNumber(contributor.rdgm) : "0"} FCFA</td>
+                    <td>${formatNumber(contributor.moyenne)} FCFA</td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            document.getElementById('contributorCount').textContent = `${contributors.length} contributeurs`;
+        }
+
+        // Fonction pour filtrer les transactions
+        function filterTransactions() {
+            const dateFilter = document.getElementById('dateFilter').value;
+            const typeFilter = document.getElementById('typeFilter').value;
+            const accountFilter = document.getElementById('accountFilter').value;
+            
+            let filtered = transactions;
+            
+            // Filtre par date
+            if (dateFilter !== "all") {
+                filtered = filtered.filter(transaction => {
+                    if (dateFilter === "week1") return transaction.semaine === 1;
+                    if (dateFilter === "week2") return transaction.semaine === 2;
+                    if (dateFilter === "week3") return transaction.semaine === 3;
+                    return true;
+                });
+            }
+            
+            // Filtre par type
+            if (typeFilter !== "all") {
+                filtered = filtered.filter(transaction => {
+                    if (typeFilter === "entree") return transaction.type === "Entrée";
+                    if (typeFilter === "sortie") return transaction.type === "Sortie";
+                    return true;
+                });
+            }
+            
+            // Filtre par compte
+            if (accountFilter !== "all") {
+                filtered = filtered.filter(transaction => {
+                    if (accountFilter === "Aumônes") return transaction.compte.includes("Aumônes");
+                    if (accountFilter === "Bâtisseurs") return transaction.compte.includes("Bâtisseurs");
+                    if (accountFilter === "RDGM") return transaction.compte.includes("Retraite") || transaction.compte.includes("RDGM");
+                    return true;
+                });
+            }
+            
+            displayTransactions(filtered);
+            updateChartsForFilter(filtered);
+        }
+
+        // Fonction pour réinitialiser les filtres
+        function resetFilters() {
+            document.getElementById('dateFilter').value = "all";
+            document.getElementById('typeFilter').value = "all";
+            document.getElementById('accountFilter').value = "all";
+            
+            // Réinitialiser les boutons de semaine
+            document.querySelectorAll('.week-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector('.week-btn[data-week="all"]').classList.add('active');
+            
+            filterTransactions();
+        }
+
+        // Fonction pour créer tous les graphiques
+        function createCharts() {
+            // Graphique de répartition des fonds
+            const fundsCtx = document.getElementById('fundsChart').getContext('2d');
+            new Chart(fundsCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Aumônes (9 832,5 FCFA)', 'Bâtisseurs (31 665 FCFA)'],
+                    datasets: [{
+                        data: [9832.5, 31665],
+                        backgroundColor: ['#3498db', '#27ae60'],
+                        borderColor: ['#2980b9', '#219653'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { size: 14 },
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${formatNumber(value)} FCFA (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Graphique de répartition par support
+            const supportCtx = document.getElementById('supportChart').getContext('2d');
+            new Chart(supportCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Orange Money (89%)', 'Mobile Money (8%)', 'Espèces (2%)'],
+                    datasets: [{
+                        data: [37047.5, 3450, 1000],
+                        backgroundColor: ['#f39c12', '#3498db', '#95a5a6'],
+                        borderColor: ['#e67e22', '#2980b9', '#7f8c8d'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { size: 14 },
+                                padding: 20
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Graphique des contributeurs (camembert)
+            const contributorsPieCtx = document.getElementById('contributorsPieChart').getContext('2d');
+            new Chart(contributorsPieCtx, {
+                type: 'pie',
+                data: {
+                    labels: contributors.map(c => c.name),
+                    datasets: [{
+                        data: contributors.map(c => c.total),
+                        backgroundColor: [
+                            '#2c3e50', '#3498db', '#27ae60', 
+                            '#f39c12', '#9b59b6', '#e74c3c'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { size: 12 },
+                                padding: 15
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed;
+                                    const total = contributors.reduce((a, b) => a + b.total, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${label}: ${formatNumber(value)} FCFA (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Graphique des top contributeurs (barres)
+            const topContributorsCtx = document.getElementById('topContributorsChart').getContext('2d');
+            new Chart(topContributorsCtx, {
+                type: 'bar',
+                data: {
+                    labels: contributors.map(c => c.name),
+                    datasets: [
+                        {
+                            label: 'Aumônes',
+                            data: contributors.map(c => c.aumones),
+                            backgroundColor: 'rgba(52, 152, 219, 0.7)',
+                            borderColor: '#3498db',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Bâtisseurs',
+                            data: contributors.map(c => c.batisseurs),
+                            backgroundColor: 'rgba(39, 174, 96, 0.7)',
+                            borderColor: '#27ae60',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'R.DGM',
+                            data: contributors.map(c => c.rdgm),
+                            backgroundColor: 'rgba(243, 156, 18, 0.7)',
+                            borderColor: '#f39c12',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            stacked: true,
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatNumber(value) + ' FCFA';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.dataset.label || '';
+                                    const value = context.parsed.y;
+                                    return `${label}: ${formatNumber(value)} FCFA`;
+                                }
+                            }
+                        },
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: { size: 12 }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Graphique des entrées/sorties par semaine
+            const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
+            window.weeklyChart = new Chart(weeklyCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Semaine 1', 'Semaine 2', 'Semaine 3'],
+                    datasets: [
+                        {
+                            label: 'Entrées',
+                            data: [1200, 42150, 17147.5],
+                            backgroundColor: 'rgba(39, 174, 96, 0.7)',
+                            borderColor: '#27ae60',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Sorties',
+                            data: [5800, 8000, 12000],
+                            backgroundColor: 'rgba(231, 76, 60, 0.7)',
+                            borderColor: '#e74c3c',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatNumber(value) + ' FCFA';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.dataset.label || '';
+                                    const value = context.parsed.y;
+                                    return `${label}: ${formatNumber(value)} FCFA`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Graphique des dépenses
+            const expensesCtx = document.getElementById('expensesChart').getContext('2d');
+            new Chart(expensesCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Cuisine Retraite (65%)', 'Facture électricité (35%)'],
+                    datasets: [{
+                        data: [13000, 7000],
+                        backgroundColor: ['#f39c12', '#3498db'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+            
+            // Graphique d'évolution quotidienne
+            const dailyCtx = document.getElementById('dailyEvolutionChart').getContext('2d');
+            
+            // Préparer les données par jour
+            const dailyData = {};
+            transactions.forEach(t => {
+                if (!dailyData[t.date]) {
+                    dailyData[t.date] = { entree: 0, sortie: 0 };
+                }
+                if (t.type === "Entrée") {
+                    dailyData[t.date].entree += t.montant;
+                } else {
+                    dailyData[t.date].sortie += t.montant;
+                }
+            });
+            
+            const dates = Object.keys(dailyData).sort();
+            const entrees = dates.map(d => dailyData[d].entree);
+            const sorties = dates.map(d => dailyData[d].sortie);
+            
+            window.dailyChart = new Chart(dailyCtx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [
+                        {
+                            label: 'Entrées',
+                            data: entrees,
+                            borderColor: '#27ae60',
+                            backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Sorties',
+                            data: sorties,
+                            borderColor: '#e74c3c',
+                            backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatNumber(value) + ' FCFA';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Graphique du solde cumulé
+            const cumulativeCtx = document.getElementById('cumulativeChart').getContext('2d');
+            
+            // Calculer le solde cumulé par jour
+            let soldeCumule = 0;
+            const soldesCumules = [];
+            const datesCumul = [];
+            
+            dates.forEach(date => {
+                const soldeJour = dailyData[date].entree - dailyData[date].sortie;
+                soldeCumule += soldeJour;
+                soldesCumules.push(soldeCumule);
+                datesCumul.push(date);
+            });
+            
+            window.cumulativeChart = new Chart(cumulativeCtx, {
+                type: 'line',
+                data: {
+                    labels: datesCumul,
+                    datasets: [{
+                        label: 'Solde Cumulé',
+                        data: soldesCumules,
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatNumber(value) + ' FCFA';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Fonction pour mettre à jour les graphiques en fonction des filtres
+        function updateChartsForFilter(filteredTransactions) {
+            // Mettre à jour le graphique des entrées/sorties par semaine
+            if (window.weeklyChart) {
+                const semaine1 = filteredTransactions.filter(t => t.semaine === 1);
+                const semaine2 = filteredTransactions.filter(t => t.semaine === 2);
+                const semaine3 = filteredTransactions.filter(t => t.semaine === 3);
+                
+                const entreeSem1 = semaine1.filter(t => t.type === "Entrée").reduce((sum, t) => sum + t.montant, 0);
+                const sortieSem1 = semaine1.filter(t => t.type === "Sortie").reduce((sum, t) => sum + t.montant, 0);
+                
+                const entreeSem2 = semaine2.filter(t => t.type === "Entrée").reduce((sum, t) => sum + t.montant, 0);
+                const sortieSem2 = semaine2.filter(t => t.type === "Sortie").reduce((sum, t) => sum + t.montant, 0);
+                
+                const entreeSem3 = semaine3.filter(t => t.type === "Entrée").reduce((sum, t) => sum + t.montant, 0);
+                const sortieSem3 = semaine3.filter(t => t.type === "Sortie").reduce((sum, t) => sum + t.montant, 0);
+                
+                window.weeklyChart.data.datasets[0].data = [entreeSem1, entreeSem2, entreeSem3];
+                window.weeklyChart.data.datasets[1].data = [sortieSem1, sortieSem2, sortieSem3];
+                window.weeklyChart.update();
+            }
+            
+            // Mettre à jour le graphique d'évolution quotidienne
+            if (window.dailyChart) {
+                const dailyData = {};
+                filteredTransactions.forEach(t => {
+                    if (!dailyData[t.date]) {
+                        dailyData[t.date] = { entree: 0, sortie: 0 };
+                    }
+                    if (t.type === "Entrée") {
+                        dailyData[t.date].entree += t.montant;
+                    } else {
+                        dailyData[t.date].sortie += t.montant;
+                    }
+                });
+                
+                const dates = Object.keys(dailyData).sort();
+                const entrees = dates.map(d => dailyData[d].entree);
+                const sorties = dates.map(d => dailyData[d].sortie);
+                
+                window.dailyChart.data.labels = dates;
+                window.dailyChart.data.datasets[0].data = entrees;
+                window.dailyChart.data.datasets[1].data = sorties;
+                window.dailyChart.update();
+            }
+            
+            // Mettre à jour le graphique du solde cumulé
+            if (window.cumulativeChart) {
+                const dailyData = {};
+                filteredTransactions.forEach(t => {
+                    if (!dailyData[t.date]) {
+                        dailyData[t.date] = { entree: 0, sortie: 0 };
+                    }
+                    if (t.type === "Entrée") {
+                        dailyData[t.date].entree += t.montant;
+                    } else {
+                        dailyData[t.date].sortie += t.montant;
+                    }
+                });
+                
+                const dates = Object.keys(dailyData).sort();
+                let soldeCumule = 0;
+                const soldesCumules = [];
+                
+                dates.forEach(date => {
+                    const soldeJour = dailyData[date].entree - dailyData[date].sortie;
+                    soldeCumule += soldeJour;
+                    soldesCumules.push(soldeCumule);
+                });
+                
+                window.cumulativeChart.data.labels = dates;
+                window.cumulativeChart.data.datasets[0].data = soldesCumules;
+                window.cumulativeChart.update();
+            }
+        }
+
+        // Fonction pour exporter les données
+        function exportData() {
+            // Créer un fichier CSV pour les transactions
+            let csvContent = "Date;Type;Compte;Montant (FCFA);Description;Moyen;Contributeur\n";
+            
+            transactions.forEach(transaction => {
+                csvContent += `${transaction.date};${transaction.type};${transaction.compte};${transaction.montant};${transaction.description};${transaction.moyen};${transaction.contributeur}\n`;
+            });
+            
+            // Créer un blob et télécharger
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "transactions_ben_finance_janvier_2026.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            alert("Export terminé ! Fichier CSV téléchargé.");
+        }
+
+        // Fonction pour basculer le mode sombre
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.querySelector('#darkModeToggle i');
+            const buttonText = document.querySelector('#darkModeToggle');
+            
+            if (document.body.classList.contains('dark-mode')) {
+                icon.className = 'fas fa-sun';
+                buttonText.innerHTML = '<i class="fas fa-sun"></i> Mode Clair';
+            } else {
+                icon.className = 'fas fa-moon';
+                buttonText.innerHTML = '<i class="fas fa-moon"></i> Mode Sombre';
+            }
+            
+            // Sauvegarder la préférence dans le localStorage
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
+
+        // Fonction pour gérer la navigation
+        function setupNavigation() {
+            // Navigation par ancres
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Retirer la classe active de tous les boutons
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Ajouter la classe active au bouton cliqué
+                    this.classList.add('active');
+                    
+                    // Faire défiler vers la section correspondante
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    
+                    if (targetSection) {
+                        window.scrollTo({
+                            top: targetSection.offsetTop - 20,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Navigation par boutons de semaine
+            const weekButtons = document.querySelectorAll('.week-btn');
+            weekButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Retirer la classe active de tous les boutons
+                    weekButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Ajouter la classe active au bouton cliqué
+                    this.classList.add('active');
+                    
+                    // Mettre à jour le filtre de date
+                    const week = this.getAttribute('data-week');
+                    if (week === 'all') {
+                        document.getElementById('dateFilter').value = 'all';
+                    } else if (week === '1') {
+                        document.getElementById('dateFilter').value = 'week1';
+                    } else if (week === '2') {
+                        document.getElementById('dateFilter').value = 'week2';
+                    } else if (week === '3') {
+                        document.getElementById('dateFilter').value = 'week3';
+                    }
+                    
+                    filterTransactions();
+                });
+            });
+        }
+
+        // Fonction pour gérer le bouton de défilement vers le haut
+        function setupScrollTop() {
+            const scrollTopBtn = document.getElementById('scrollTop');
+            
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 300) {
+                    scrollTopBtn.classList.add('show');
+                } else {
+                    scrollTopBtn.classList.remove('show');
+                }
+            });
+            
+            scrollTopBtn.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Afficher les données initiales
+            displayTransactions(transactions);
+            displayContributors();
+            
+            // Créer les graphiques
+            createCharts();
+            
+            // Configurer la navigation
+            setupNavigation();
+            
+            // Configurer le bouton de défilement
+            setupScrollTop();
+            
+            // Configurer les écouteurs d'événements
+            document.getElementById('dateFilter').addEventListener('change', filterTransactions);
+            document.getElementById('typeFilter').addEventListener('change', filterTransactions);
+            document.getElementById('accountFilter').addEventListener('change', filterTransactions);
+            document.getElementById('exportBtn').addEventListener('click', exportData);
+            document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
+            document.getElementById('resetFilters').addEventListener('click', resetFilters);
+            
+            // Vérifier le mode sombre sauvegardé
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+                const icon = document.querySelector('#darkModeToggle i');
+                const buttonText = document.querySelector('#darkModeToggle');
+                icon.className = 'fas fa-sun';
+                buttonText.innerHTML = '<i class="fas fa-sun"></i> Mode Clair';
+            }
+            
+            // Gérer les clics sur les liens d'ancrage
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 20,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
